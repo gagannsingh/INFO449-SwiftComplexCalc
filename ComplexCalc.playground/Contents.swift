@@ -34,9 +34,44 @@ class Calculator {
     func add(_ numbers: [Int]) -> Int {
         return numbers.reduce(0, +)
     }
+
+    func add(lhs p1: (Int, Int), rhs p2: (Int, Int)) -> (Int, Int) {
+        return (p1.0 + p2.0, p1.1 + p2.1)
+    }
+
+    
+    func add(lhs pd1: [String: Int], rhs pd2: [String: Int]) -> [String: Int] {
+        guard let x1 = pd1["x"], let y1 = pd1["y"],
+              let x2 = pd2["x"], let y2 = pd2["y"] else {
+            fatalError("Missing key(s) in dictionaries")
+        }
+
+        let x = x1 + x2
+        let y = y1 + y2
+
+        return ["x": x, "y": y]
+    }
+ 
+    
     func subtract(lhs: Int, rhs: Int) -> Int {
         return lhs - rhs
     }
+    func subtract(lhs p1: (Int, Int), rhs p2: (Int, Int)) -> (Int, Int) {
+        return (p1.0 - p2.0, p1.1 - p2.1)
+    }
+    
+    func subtract(lhs pd1: [String: Int], rhs pd2: [String: Int]) -> [String: Int] {
+        guard let x1 = pd1["x"], let y1 = pd1["y"],
+              let x2 = pd2["x"], let y2 = pd2["y"] else {
+            fatalError("Missing key(s) in dictionaries")
+        }
+
+        let x = x1 - x2
+        let y = y1 - y2
+
+        return ["x": x, "y": y]
+    }
+    
     func multiply(_ numbers: [Int]) -> Int {
         return numbers.reduce(1, *)
     }
@@ -49,6 +84,13 @@ class Calculator {
     func mathOp(lhs: Int, rhs: Int, op: (Int, Int) -> Int) -> Int {
         return op(lhs, rhs)
     }
+
+    func mathOp(args: [Int], beg: Int, op: (Int, Int) -> Int) -> Int {
+        let number = args.reduce(beg, op)
+        return number
+    }
+
+
     func count(_ numbers: [Int]) -> Int {
         return numbers.count
     }
@@ -74,7 +116,8 @@ let calc = Calculator()
 //: Keep in mind that writing new tests may reveal ambiguity in the specification above--if that's the case, document the ambiguity, declare what you think *should* happen, and write the test to test for it.
 
 // ===== Your tests go here
-
+calc.mathOp(args: [1, 2, 3, 4, 5], beg: 120, op: { $0 / $1 }) == 1 //what about divison?  the first operation will be 120 / 1, then 120 / 2, then 60 / 3, and so on
+//calc.add(lhs: 2.75, rhs: 1.75) == 4.50 //Test addition with decimals
 //: ---
 //: ## Test code block
 //: Do not modify the code in this section
@@ -98,21 +141,21 @@ calc.avg([1]) == 1
 
 calc.mathOp(args: [1, 2, 3], beg: 0, op: { $0 + $1 }) == 6
     // this is (((0 op 1) op 2) op 3)
-//calc.mathOp(args: [1, 2, 3, 4, 5], beg: 0, op: { $0 + $1 }) == 15
+calc.mathOp(args: [1, 2, 3, 4, 5], beg: 0, op: { $0 + $1 }) == 15
     // this is (((((0 op 1) op 2) op 3) op 4) op 5)
-//calc.mathOp(args: [1, 1, 1, 1, 1], beg: 1, op: { $0 * $1 }) == 1
+calc.mathOp(args: [1, 1, 1, 1, 1], beg: 1, op: { $0 * $1 }) == 1
     // this is (((((1 op 1) op 1) op 1) op 1) op 1)
 
-//let p1 = (5, 5)
-//let p2 = (12, -27)
-//let p3 = (-4, 4)
-//let p4 = (0, 0)
-//calc.add(lhs: p1, rhs: p2) == (17, -22)
-//calc.subtract(lhs: p1, rhs: p2) == (-7, 32)
-//calc.add(lhs: p4, rhs: p4) == (0, 0)
-//calc.add(lhs: p3, rhs: p4) == (-4, 4)
+let p1 = (5, 5)
+let p2 = (12, -27)
+let p3 = (-4, 4)
+let p4 = (0, 0)
+calc.add(lhs: p1, rhs: p2) == (17, -22)
+calc.subtract(lhs: p1, rhs: p2) == (-7, 32)
+calc.add(lhs: p4, rhs: p4) == (0, 0)
+calc.add(lhs: p3, rhs: p4) == (-4, 4)
 
-//let pd1 = ["x": 5, "y": 5]
-//let pd2 = ["x": -4, "y": 4]
-//calc.add(lhs: pd1, rhs: pd2) == ["x": 1, "y": 9]
-//calc.subtract(lhs: pd1, rhs: pd2) == ["x": 9, "y": 1]
+let pd1 = ["x": 5, "y": 5]
+let pd2 = ["x": -4, "y": 4]
+calc.add(lhs: pd1, rhs: pd2) == ["x": 1, "y": 9]
+calc.subtract(lhs: pd1, rhs: pd2) == ["x": 9, "y": 1]
